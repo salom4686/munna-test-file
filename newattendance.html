@@ -277,20 +277,15 @@
 <script>
 // ১. ভেরিয়েবলগুলো সবার উপরে (Global) থাকতে হবে
 let attendanceData = [], employees = [], slCount = 1;
-let holidayList = [
-    "2026-01-01", "2026-01-02", "2026-02-01", "2026-02-15", 
-    "2026-02-17", "2026-02-20", "2026-03-12", "2026-03-19", 
-    "2026-03-20", "2026-03-21", "2026-05-01", "2026-05-31", 
-    "2026-06-21", "2026-08-15", "2026-09-16", "2026-09-23", 
-    "2026-11-02", "2026-11-08", "2026-12-22", "2026-12-25"
-]; 
+let holidayList = []; // শিট থেকে আসা ছুটির তালিকা এখানে জমা হবে
 let isEmployeeLoaded = false, isSitesLoaded = false;
 let datePicker;
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxThbdoZNDzLeH0ZW6iUX3cTDPe4FOWbeiFaT2huGF2J290vew1xsacqNWqGpLSL1xs/exec";
+// আপনার দেওয়া Deployment ID
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_RgZ7yblB0PMuLqG2IOykhBIpV0_9QQXavvRVBOrnhKuFoXVQ-Nzys8Eje6PXrt2LWg/exec";
 
 window.onload = () => {
-    // ২. Flatpickr সেটিংস
+    // ২. Flatpickr সেটিংস এবং অটো-হলিডে লজিক
     datePicker = flatpickr("#attDate", { 
         dateFormat: "Y-m-d", 
         altInput: true, 
@@ -299,13 +294,16 @@ window.onload = () => {
         onChange: function(selectedDates, dateStr) {
             if (selectedDates.length > 0) {
                 const statusSelect = document.getElementById('attStatus');
-                const day = selectedDates[0].getDay(); // 0 = Sunday
+                
+                // ক) রবিবার চেক (0 = Sunday)
+                const day = selectedDates[0].getDay(); 
                 const isSunday = (day === 0);
                 
-                // ছুটির তালিকা চেক
-                const isManualHoliday = holidayList.some(h => String(h).trim() === dateStr.trim());
+                // খ) শিটের হলিডে লিস্ট চেক
+                // dateStr ফরম্যাট (YYYY-MM-DD) এর সাথে লিস্টের তুলনা
+                const isSheetHoliday = holidayList.includes(dateStr);
 
-                if (isSunday || isManualHoliday) {
+                if (isSunday || isSheetHoliday) {
                     statusSelect.value = "Holiday";
                 } else {
                     statusSelect.value = "Present";
@@ -314,7 +312,6 @@ window.onload = () => {
         }
     });
     
-    // ডাটা লোড করা শুরু
     refreshAllData(false);
     
     document.addEventListener('click', (e) => {
@@ -333,42 +330,42 @@ async function refreshAllData(isManual) {
             btn.innerHTML = `<span class="spinner"></span> Updating...`;
             btn.disabled = true;
             mainContent.classList.add('screen-lock-blur');
+            resetAllInputs();
+            attendanceData = [];
+            slCount = 1;
+            renderTable();
         }
 
+        // শিট থেকে সব ডাটা একত্রে ফেচ করা হচ্ছে
         const response = await fetch(`${SCRIPT_URL}?type=json`);
-       const empData = await empRes.json();
-        
-        // আপনার শিটের ছবি অনুযায়ী ডাটা ম্যাপিং (B=1, C=2, D=3...)
-        // employees.slice(1) ব্যবহার করা হয়েছে কারণ প্রথম রো তে হেডার থাকে
-        if (empData.employees) {
-            employees = empData.employees.slice(1).map(emp => ({
+        const data = await response.json();
+
+        // ১. Employee Data প্রসেস (আপনার শিটের কলাম ম্যাপিং অনুযায়ী)
+        if (data.employees && data.employees.length > 1) {
+            employees = data.employees.slice(1).map(emp => ({
                 id: String(emp[1]).padStart(5, '0'), // B Column: ID
-                name: emp[2],                        // C Column: Employee Name
+                name: emp[2],                        // C Column: Name
                 period: emp[3],                      // D Column: Period
                 designation: emp[4],                 // E Column: Designation
                 joining: emp[5],                     // F Column: Joining Date
                 workingAs: emp[6],                   // G Column: Working As
-                passport: emp[7],                    // H Column: Passport No
-                salary: emp[8],                      // I Column: Basic Salary
+                passport: emp[7],                    // H Column: Passport
+                salary: emp[8],                      // I Column: Salary
                 otRate: emp[9]                       // J Column: OT Rate
             }));
             isEmployeeLoaded = true;
         }
 
-        // সাইট লিস্ট আপডেট (SIDE NAME থেকে আসা ডাটা)
-        if (data.sites && data.sites.length > 0) {
+        // ২. Holiday List আপডেট (অটো-সিলেক্টের জন্য এটি জরুরি)
+        if (data.holidays) {
+            holidayList = data.holidays; 
+        }
+
+        // ৩. সাইট নেম ড্রপডাউন আপডেট
+        if (sideSelect && data.sites) {
             sideSelect.innerHTML = '<option value="" disabled selected>Select Site</option>' + 
                 data.sites.map(s => `<option value="${s}">${s}</option>`).join('');
             isSitesLoaded = true;
-        } else {
-            console.warn("No sites found in database.");
-            sideSelect.innerHTML = '<option value="" disabled selected>No Sites Available</option>';
-            isSitesLoaded = true; // অ্যাপ যাতে লোডিং এ আটকে না থাকে
-        }
-
-        // শিট থেকে হলিডে আপডেট
-        if (data.holidays && data.holidays.length > 0) {
-            holidayList = data.holidays; 
         }
 
         checkInitialLoad();
@@ -381,9 +378,7 @@ async function refreshAllData(isManual) {
         }
     } catch (err) {
         console.error("Refresh Error:", err);
-        // Error হলেও অ্যাপ যাতে ওপেন হয় তার ব্যবস্থা
-        isEmployeeLoaded = true; 
-        isSitesLoaded = true; 
+        isEmployeeLoaded = isSitesLoaded = true;
         checkInitialLoad();
     }
 }
@@ -395,20 +390,19 @@ function checkInitialLoad() {
     }
 }
 
-function forceOpenApp() { isEmployeeLoaded = isSitesLoaded = true; checkInitialLoad(); }
-
 function handleIdInput(input) {
     const val = input.value.trim().toLowerCase();
     const box = document.getElementById('idSuggestions');
     if (!box || employees.length === 0) return;
     box.innerHTML = '';
     
-    const filtered = val === '' ? employees : employees.filter(e => e.id.includes(val) || e.name.toLowerCase().includes(val));
+    // ভ্যালু খালি থাকলে সাজেশন দেখাবে না, টাইপ করলে ফিল্টার করবে
+    const filtered = val === '' ? [] : employees.filter(e => e.id.includes(val) || e.name.toLowerCase().includes(val));
     
     if (filtered.length > 0) {
         filtered.forEach(emp => {
             const div = document.createElement('div');
-            div.className = 'suggestion-item flex justify-between items-center transition-colors';
+            div.className = 'suggestion-item flex justify-between items-center transition-colors p-2 cursor-pointer hover:bg-slate-100';
             div.innerHTML = `<div class="flex flex-col"><span class="text-brand-blue font-black text-xs">ID: ${emp.id}</span><span class="text-slate-800 font-semibold text-[13px]">${emp.name}</span></div>`;
             div.onmousedown = () => selectEmployee(emp);
             box.appendChild(div);
@@ -416,32 +410,18 @@ function handleIdInput(input) {
         box.style.display = 'block';
     } else { box.style.display = 'none'; }
 }
+
 function selectEmployee(emp) {
-    // ইনপুট ফিল্ডগুলোতে ডাটা বসানো
     document.getElementById('empId').value = emp.id;
     document.getElementById('empName').value = emp.name;
     document.getElementById('passport').value = emp.passport || '';
-    document.getElementById('designation').value = emp.designation || ''; // শিটের Designation কলাম
-    
-    // তারিখ ফরম্যাট ঠিক করা (শিট থেকে আসা তারিখকে HTML সাপোর্টেড করা)
-    let rawDate = emp.joining;
-    if (rawDate && typeof rawDate === 'string' && rawDate.includes('/')) {
-        const parts = rawDate.split('/');
-        if(parts[2] && parts[2].length === 4) {
-            // DD/MM/YYYY -> YYYY-MM-DD
-            rawDate = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
-        }
-    }
-    
-    document.getElementById('joiningDate').value = rawDate || '';
+    document.getElementById('designation').value = emp.designation || '';
+    document.getElementById('joiningDate').value = emp.joining || '';
     document.getElementById('period').value = emp.period || '';
     document.getElementById('basicSalary').value = emp.salary || '';
     document.getElementById('globalOtRate').value = emp.otRate || '0';
-    
-    // সাজেশন বক্স বন্ধ করা
     document.getElementById('idSuggestions').style.display = 'none';
 }
-
 function showCustomAlert(title, msg, type = 'error') {
     const container = document.getElementById('alertIconContainer');
     const titleEl = document.getElementById('alertTitle');
