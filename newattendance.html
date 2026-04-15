@@ -339,7 +339,7 @@ async function refreshAllData(isManual) {
         const data = await response.json();
 
         // এমপ্লয়ি ডাটা প্রসেস
-        if (data.employees) {
+        if (data.employees && data.employees.length > 0) {
             employees = data.employees.slice(1).map(emp => ({
                 id: String(emp[0]).padStart(5, '0'), 
                 name: emp[1],
@@ -353,11 +353,15 @@ async function refreshAllData(isManual) {
             isEmployeeLoaded = true;
         }
 
-        // সাইট লিস্ট আপডেট
-        if (data.sites) {
+        // সাইট লিস্ট আপডেট (SIDE NAME থেকে আসা ডাটা)
+        if (data.sites && data.sites.length > 0) {
             sideSelect.innerHTML = '<option value="" disabled selected>Select Site</option>' + 
                 data.sites.map(s => `<option value="${s}">${s}</option>`).join('');
             isSitesLoaded = true;
+        } else {
+            console.warn("No sites found in database.");
+            sideSelect.innerHTML = '<option value="" disabled selected>No Sites Available</option>';
+            isSitesLoaded = true; // অ্যাপ যাতে লোডিং এ আটকে না থাকে
         }
 
         // শিট থেকে হলিডে আপডেট
@@ -375,8 +379,10 @@ async function refreshAllData(isManual) {
         }
     } catch (err) {
         console.error("Refresh Error:", err);
-        // Error হলেও অ্যাপ ওপেন করার ব্যবস্থা
-        isEmployeeLoaded = true; isSitesLoaded = true; checkInitialLoad();
+        // Error হলেও অ্যাপ যাতে ওপেন হয় তার ব্যবস্থা
+        isEmployeeLoaded = true; 
+        isSitesLoaded = true; 
+        checkInitialLoad();
     }
 }
 
