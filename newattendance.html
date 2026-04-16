@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEW ATTENDANCE </title>
+    <title>NEW ATTENDANCE - ALAMHOW</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
@@ -479,41 +479,83 @@
             } else box.style.display = 'none';
         }
 
-        function selectEmployee(emp) {
-            document.getElementById('empId').value = emp.id;
-            document.getElementById('empName').value = emp.name;
-            document.getElementById('passport').value = emp.passport || '';
-            document.getElementById('designation').value = emp.workingAs || '';
-            document.getElementById('joiningDate').value = emp.joining || '';
-            document.getElementById('period').value = emp.period || '';
-            document.getElementById('basicSalary').value = emp.salary || '0';
-            document.getElementById('globalOtRate').value = emp.otRate || '0';
-            document.getElementById('idSuggestions').style.display = 'none';
-            if(document.getElementById('attDate').value) handleDateChange(document.getElementById('attDate').value);
-        }
+       function selectEmployee(emp) {
+    document.getElementById('empId').value = emp.id;
+    document.getElementById('empName').value = emp.name;
+    document.getElementById('passport').value = emp.passport || '';
+    
+    // ১. ইনপুটে শুধুমাত্র M কলামের ডাটা (Designation) দেখাবে
+    document.getElementById('designation').value = emp.designation || '';
+    
+    // ২. J কলামের ডাটা (WorkingAs) আমরা একটি টেম্পোরারি প্রপার্টিতে রাখছি যা পরে সেভ হবে
+    // ইনপুটে এটি দেখাবে না
+    window.currentWorkingAs = emp.workingAs || ''; 
+    
+    document.getElementById('joiningDate').value = emp.joining || '';
+    document.getElementById('period').value = emp.period || '';
+    document.getElementById('basicSalary').value = emp.salary || '0';
+    document.getElementById('globalOtRate').value = emp.otRate || '0';
+    document.getElementById('idSuggestions').style.display = 'none';
+    
+    if(document.getElementById('attDate').value) handleDateChange(document.getElementById('attDate').value);
+}
 
-        function requestAddEntry() {
-            let rawEmpId = document.getElementById('empId').value.trim();
-            const attDate = document.getElementById('attDate').value, site = document.getElementById('sideName').value;
-            if(!rawEmpId || !attDate || !site) return showCustomAlert("Missing Data", "Fill ID, Date and Site!", "warning");
-            let formattedId = isNaN(rawEmpId) ? rawEmpId : rawEmpId.padStart(4, '0');
-            const isDuplicate = attendanceData.some(e => e.id !== editModeId && e.empId.replace("'", "") === formattedId && e.date === attDate);
-            if (isDuplicate) return showCustomAlert("Duplicate", "Entry exists for this date!", "error");
-            
-            const newEntry = { 
-                id: editModeId || Date.now(), entryDate: new Date().toLocaleDateString('en-GB'), entryTime: new Date().toLocaleTimeString('en-GB', { hour12: true }),
-                slNo: editModeId ? attendanceData.find(i=>i.id === editModeId).slNo : slCount++, date: attDate,
-                empId: "'" + formattedId, empName: document.getElementById('empName').value, workingAs: document.getElementById('designation').value,
-                passport: document.getElementById('passport').value, salary: document.getElementById('basicSalary').value, 
-                ot: parseFloat(document.getElementById('dailyOt').value) || 0, holidayWork: parseFloat(document.getElementById('holidayWork').value) || 0,
-                sundayWork: parseFloat(document.getElementById('sundayWork').value) || 0, site, status: "Present", remark: document.getElementById('attRemark').value,
-                rate: document.getElementById('globalOtRate').value, joining: document.getElementById('joiningDate').value, period: document.getElementById('period').value
-            };
-            if (editModeId) { attendanceData[attendanceData.findIndex(i => i.id === editModeId)] = newEntry; editModeId = null; 
-                document.getElementById('addBtn').innerText = "Add"; document.getElementById('addBtn').classList.replace('bg-orange-500', 'bg-[#1e3a5f]');
-            } else attendanceData.push(newEntry);
-            renderTable(); resetAllInputs();
-        }
+function requestAddEntry() {
+    let rawEmpId = document.getElementById('empId').value.trim();
+    const attDate = document.getElementById('attDate').value;
+    const site = document.getElementById('sideName').value;
+    
+    if(!rawEmpId || !attDate || !site) return showCustomAlert("Missing Data", "Fill ID, Date and Site!", "warning");
+    
+    let formattedId = isNaN(rawEmpId) ? rawEmpId : rawEmpId.padStart(4, '0');
+    
+    // ডুপ্লিকেট চেক
+    const isDuplicate = attendanceData.some(e => e.id !== editModeId && e.empId.replace("'", "") === formattedId && e.date === attDate);
+    if (isDuplicate) return showCustomAlert("Duplicate", "Entry exists for this date!", "error");
+
+    const newEntry = { 
+        id: editModeId || Date.now(),
+        slNo: editModeId ? attendanceData.find(i=>i.id === editModeId).slNo : slCount++,
+        date: attDate,
+        empId: "'" + formattedId,
+        empName: document.getElementById('empName').value,
+        period: document.getElementById('period').value || '',
+        
+        // ৩. শিটে সেভ করার জন্য ম্যাপিং
+        designation: document.getElementById('designation').value, // এটি শিটের H কলামে যাবে (M কলাম থেকে আসা ডাটা)
+        workingAs: window.currentWorkingAs || document.getElementById('designation').value, // এটি শিটের J কলামে যাবে
+        
+        joiningDate: document.getElementById('joiningDate').value || '',
+        passport: document.getElementById('passport').value || '',
+        salary: document.getElementById('basicSalary').value || 0,
+        otRate: document.getElementById('globalOtRate').value || 0,
+        ot: parseFloat(document.getElementById('dailyOt').value) || 0,
+        site: site,
+        status: "Present",
+        holidayWork: parseFloat(document.getElementById('holidayWork').value) || 0,
+        sundayWork: parseFloat(document.getElementById('sundayWork').value) || 0,
+        attBonus: 0,
+        perfBonus: 0,
+        advance: 0,
+        nps: 0,
+        csg: 0,
+        remark: document.getElementById('attRemark').value
+    };
+
+    if (editModeId) { 
+        attendanceData[attendanceData.findIndex(i => i.id === editModeId)] = newEntry; 
+        editModeId = null; 
+        document.getElementById('addBtn').innerText = "Add"; 
+        document.getElementById('addBtn').classList.replace('bg-orange-500', 'bg-[#1e3a5f]');
+    } else {
+        attendanceData.push(newEntry);
+    }
+    renderTable(); 
+    resetAllInputs();
+    
+    // সেভ হওয়ার পর টেম্পোরারি ডাটা ক্লিয়ার করা
+    window.currentWorkingAs = "";
+}
 
         function renderTable() {
             const tbody = document.getElementById('attendanceBody');
