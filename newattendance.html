@@ -1,11 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEW ATTENDANCE </title>
-     <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=11bxOPboUUmQxIkT6gMYWYqxfh9jZSiLo&sz=w500">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
@@ -13,9 +11,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         
         :root {
-            --brand-blue: #1e3a5f;   /* লোগোর গাঢ় নীল */
-            --brand-gold: #f1c40f;   /* লোগোর সোনালী হলুদ */
-            --brand-light-blue: #2c5282;
+            --brand-blue: #1e3a5f;
+            --brand-gold: #f1c40f;
         }
 
         body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; overflow-x: hidden; }
@@ -26,19 +23,18 @@
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 9999; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        /* ব্লার এবং লক করার জন্য নতুন ক্লাস */
-    .screen-lock-blur {
-        filter: blur(3px); /* ৩ পিক্সেল ঘোলা হবে */
-        pointer-events: none; /* কোনো ক্লিক কাজ করবে না */
-        user-select: none;    /* টেক্সট কপি করা যাবে না */
-        transition: all 0.4s ease; /* স্মুথ ট্রানজিশন */
-    }
 
-    /* লোডিং ওভারলে-এর ব্যাকগ্রাউন্ড স্বচ্ছ করার জন্য */
-    #loadingOverlay.processing-mode {
-        background: rgba(255, 255, 255, 0.2); /* হালকা স্বচ্ছ সাদা */
-        backdrop-filter: none; /* এখানে ব্লার দরকার নেই কারণ কন্টেন্ট আলাদাভাবে ব্লার হচ্ছে */
-    }
+        #loadingOverlay.processing-mode {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .screen-lock-blur {
+            filter: blur(3px);
+            pointer-events: none;
+            user-select: none;
+            transition: all 0.4s ease;
+        }
 
         .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .input-group label { display: block; font-size: 0.7rem; font-weight: 700; color: var(--brand-blue); margin-bottom: 0.15rem; text-transform: uppercase; }
@@ -52,7 +48,7 @@
             display: none; margin-top: 4px;
         }
         .suggestion-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #f3f4f6; }
-        .suggestion-item:hover { background-color: #fdf9e7; } /* Light gold hover */
+        .suggestion-item:hover { background-color: #fdf9e7; }
         
         .loader-circle {
             border: 4px solid #f3f3f3; border-top: 4px solid var(--brand-blue);
@@ -60,23 +56,13 @@
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        /* বাটনের ভেতরের স্পিনার স্টাইল */
-.spinner {
-    width: 14px;
-    height: 14px;
-    border: 2px solid #ffffff;
-    border-bottom-color: transparent;
-    border-radius: 50%;
-    display: inline-block;
-    animation: rotation 1s linear infinite;
-    margin-right: 8px;
-    vertical-align: middle;
-}
 
-@keyframes rotation {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        .spinner {
+            width: 14px; height: 14px; border: 2px solid #ffffff; border-bottom-color: transparent;
+            border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite;
+            margin-right: 8px; vertical-align: middle;
+        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .fade-out { opacity: 0; pointer-events: none; visibility: hidden; }
 
@@ -86,17 +72,16 @@
             backdrop-filter: blur(4px);
         }
 
-        /* Brand Colors Helpers */
-        .bg-brand-blue { background-color: var(--brand-blue); }
-        .text-brand-blue { color: var(--brand-blue); }
-        .bg-brand-gold { background-color: var(--brand-gold); }
-        .text-brand-gold { color: var(--brand-gold); }
-        .border-brand-gold { border-color: var(--brand-gold); }
-
         @media print { 
-            .no-print { display: none; } 
+            .no-print { display: none !important; } 
             body { background: white; padding: 0; overflow: visible !important; } 
-            .card { box-shadow: none; border: 1px solid #e5e7eb; } 
+            .card { box-shadow: none; border: 1px solid #e5e7eb; }
+            #fullPreviewModal { position: relative; background: white; display: block !important; padding: 0; margin: 0; }
+            .modal-overlay { background: white; position: static; }
+            #fullPreviewModal .bg-white { box-shadow: none; width: 100%; max-height: none; overflow: visible; }
+            #fullPreviewContent { overflow: visible !important; }
+            table { font-size: 10px; border-collapse: collapse; width: 100%; }
+            th, td { border: 1px solid #000 !important; padding: 4px !important; }
         }
     </style>
 </head>
@@ -113,23 +98,73 @@
             <div id="alertIconContainer" class="flex items-center justify-center w-16 h-16 mx-auto rounded-full mb-6"></div>
             <h3 id="alertTitle" class="text-xl font-bold text-center text-slate-900 mb-2">Notification</h3>
             <p id="alertMessage" class="text-sm text-center text-slate-600 mb-8 leading-relaxed"></p>
-            <button onclick="closeAlert()" class="w-full bg-brand-blue hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition-all active:scale-95 shadow-lg uppercase tracking-wider">OK</button>
+            <div class="flex gap-2">
+                <button id="alertCancelBtn" onclick="closeAlert()" class="hidden flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-3 rounded-xl transition-all uppercase tracking-wider">Cancel</button>
+                <button id="alertOkBtn" onclick="closeAlert()" class="flex-1 bg-[#1e3a5f] hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition-all active:scale-95 shadow-lg uppercase tracking-wider">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Sheet Module (Server Data Editor) -->
+    <div id="editSheetModal" class="modal-overlay">
+        <div class="bg-white rounded-xl shadow-2xl w-[95vw] max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="p-4 bg-[#1e3a5f] text-white flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <h3 class="font-bold text-lg">Server Record Editor</h3>
+                    <div class="flex items-center gap-2 no-print">
+                        <input type="text" id="editQueryDate" placeholder="Select Date" class="text-slate-800 px-3 py-1.5 rounded-lg text-sm font-bold w-40 outline-none">
+                        <button onclick="fetchDataForEdit()" id="fetchDataBtn" class="bg-[#f1c40f] text-[#1e3a5f] px-4 py-1.5 rounded-lg font-bold text-xs uppercase hover:bg-yellow-400 transition-all">Load Data</button>
+                    </div>
+                </div>
+                <button onclick="closeEditModal()" class="bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="p-2 bg-blue-50 text-[10px] font-bold text-blue-800 uppercase text-center border-b">Only 'Assigned Site' and 'OT Hours' are editable here.</div>
+            <div class="flex-1 overflow-auto bg-white p-2">
+                <table class="w-full text-xs text-left border-collapse min-w-[800px]">
+                    <thead class="bg-slate-100 sticky top-0 z-10">
+                        <tr class="text-[#1e3a5f]">
+                            <th class="p-3 border">ID</th>
+                            <th class="p-3 border">NAME</th>
+                            <th class="p-3 border">DATE</th>
+                            <th class="p-3 border w-64 text-orange-600">ASSIGNED SITE</th>
+                            <th class="p-3 border w-24 text-orange-600 text-center">OT HRS</th>
+                            <th class="p-3 border text-center">HOLIDAY</th>
+                            <th class="p-3 border text-center">SUNDAY</th>
+                            <th class="p-3 border">REMARK</th>
+                        </tr>
+                    </thead>
+                    <tbody id="editSheetBody" class="divide-y divide-slate-200">
+                        <tr><td colspan="8" class="p-10 text-center text-slate-400 font-medium">Please select a date and click "Load Data" to fetch records from Google Sheets.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-4 border-t bg-slate-50 flex justify-end gap-3">
+                <button onclick="closeEditModal()" class="bg-slate-200 text-slate-700 px-6 py-2 rounded-lg font-bold text-sm uppercase">Close</button>
+                <button onclick="updateServerRecords()" id="updateRecordsBtn" class="bg-[#1e3a5f] text-white px-8 py-2 rounded-lg font-bold text-sm uppercase shadow-lg hover:bg-slate-800 transition-all">Update Records</button>
+            </div>
         </div>
     </div>
 
     <!-- Full Preview Modal -->
-     <div id="fullPreviewModal" class="modal-overlay">
+    <div id="fullPreviewModal" class="modal-overlay">
         <div class="bg-white rounded-xl shadow-2xl w-[98vw] max-h-[95vh] flex flex-col overflow-hidden">
-            <div class="p-5 bg-brand-blue text-white flex justify-between items-center">
-                <h3 class="font-bold text-xl italic">ALAMHOW <span class="text-brand-gold">CO LTD</span> - </h3>
+            <div class="p-5 bg-[#1e3a5f] text-white flex justify-between items-center no-print">
+                <h3 class="font-bold text-xl italic">ALAMHOW <span class="text-[#f1c40f]">CO LTD</span> - Full Preview</h3>
                 <button onclick="closeFullPreview()" class="bg-white/20 hover:bg-white/30 p-2 rounded-full transition-colors">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <div class="overflow-auto p-2 flex-1 bg-white">
-                <table class="w-full text-xs md:text-sm text-left border-collapse min-w-[1000px]">
-                    <thead class="bg-slate-100 sticky top-0 z-10">
-                        <tr class="text-brand-blue font-bold">
+            <div class="hidden print:block text-center mb-4 p-4 border-b-2 border-black">
+                <h1 class="text-2xl font-bold">ALAMHOW CO LTD</h1>
+                <p class="text-sm uppercase tracking-widest font-semibold">Daily Attendance Report</p>
+                <p class="text-xs mt-1" id="printReportDate"></p>
+            </div>
+            <div id="fullPreviewContent" class="overflow-auto p-2 flex-1 bg-white">
+                <table class="w-full text-xs md:text-sm text-left border-collapse min-w-[1100px]">
+                    <thead class="bg-slate-100 sticky top-0 z-10 print:static">
+                        <tr class="text-[#1e3a5f] font-bold print:text-black">
                             <th class="p-4 border">SL</th>
                             <th class="p-4 border">DATE</th>
                             <th class="p-4 border">ID</th>
@@ -140,130 +175,112 @@
                             <th class="p-4 border text-center">SUNDAY</th>
                             <th class="p-4 border">SITE</th>
                             <th class="p-4 border">STATUS</th>
+                            <th class="p-4 border">REMARK</th>
                         </tr>
                     </thead>
-                    <tbody id="fullPreviewBody" class="divide-y divide-slate-200">
-                        <!-- Rows will be injected here via JavaScript -->
-                    </tbody>
+                    <tbody id="fullPreviewBody" class="divide-y divide-slate-200 print:divide-black"></tbody>
+                    <tfoot id="fullPreviewFoot" class="bg-slate-50 font-black print:bg-white"></tfoot>
                 </table>
             </div>
-            <div class="p-5 border-t bg-slate-50 flex justify-between items-center">
-                <span class="text-sm text-slate-500 font-medium">* Total entries shown in preview</span>
-                <button onclick="closeFullPreview()" class="bg-brand-blue text-white px-8 py-2.5 rounded-lg font-bold shadow-lg active:scale-95 transition-all">Close Preview</button>
+            <div class="p-5 border-t bg-slate-50 flex justify-end gap-3 no-print">
+                <button onclick="window.print()" class="bg-[#f1c40f] text-[#1e3a5f] px-8 py-2.5 rounded-lg font-bold shadow-lg active:scale-95 transition-all">Print Report</button>
+                <button onclick="closeFullPreview()" class="bg-slate-200 text-slate-800 px-8 py-2.5 rounded-lg font-bold shadow-lg active:scale-95 transition-all">Close Preview</button>
             </div>
         </div>
     </div>
 
-    <div id="mainContent" class="max-w-7xl mx-auto opacity-0 transition-opacity duration-700">
-        <header class="bg-white border border-slate-200 py-4 mb-6 no-print shadow-sm mx-auto mt-2 rounded-2xl max-w-[98%] md:max-w-7xl">
-    <div class="px-4">
-        <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
-            <img src="https://lh3.googleusercontent.com/d/11bxOPboUUmQxIkT6gMYWYqxfh9jZSiLo" alt="ALAMHOW Logo" class="w-20 h-20 md:w-24 md:h-24 object-contain">
-            
-            <div class="text-center md:text-left md:border-l-2 md:border-slate-200 md:pl-8 py-1">
-                <h1 class="text-xl md:text-2xl font-extrabold text-brand-blue tracking-tight uppercase leading-none">
-                    ALAMHOW <span class="text-brand-gold">CO LTD</span>
-                </h1>
-                <p class="text-[9px] md:text-[10px] font-bold text-slate-500 tracking-[0.3em] uppercase mt-1">Daily Attendance Form</p>
+    <div id="mainContent" class="max-w-7xl mx-auto opacity-0 transition-opacity duration-700 no-print">
+        <header class="bg-white border border-slate-200 py-4 mb-6 shadow-sm mx-auto mt-2 rounded-2xl max-w-[98%] md:max-w-7xl">
+            <div class="px-4">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+                    <img src="https://lh3.googleusercontent.com/d/11bxOPboUUmQxIkT6gMYWYqxfh9jZSiLo" alt="ALAMHOW Logo" class="w-20 h-20 md:w-24 md:h-24 object-contain">
+                    <div class="text-center md:text-left md:border-l-2 md:border-slate-200 md:pl-8 py-1">
+                        <h1 class="text-xl md:text-2xl font-extrabold text-[#1e3a5f] tracking-tight uppercase leading-none">
+                            ALAMHOW <span class="text-[#f1c40f]">CO LTD</span>
+                        </h1>
+                        <p class="text-[9px] md:text-[10px] font-bold text-slate-500 tracking-[0.3em] uppercase mt-1">Daily Attendance Form</p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</header>
+        </header>
 
-        <!-- Employee Details Section -->
-        <div class="card p-5 mb-5 no-print border-l-8 border-brand-blue">
+        <!-- Employee Details -->
+        <div class="card p-5 mb-5 border-l-8 border-[#1e3a5f]">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xs font-black text-brand-blue uppercase tracking-[0.2em] flex items-center gap-2">
-                    <i class="fas fa-user-circle text-brand-gold"></i> Employee Details
-                </h2>
-                <button id="refreshBtn" onclick="refreshAllData(true)" class="text-[10px] bg-brand-blue text-white hover:bg-slate-800 px-4 py-2 rounded-lg font-bold transition-all shadow-sm flex items-center justify-center">
-    Refresh Database
-</button>
+                <h2 class="text-xs font-black text-[#1e3a5f] uppercase tracking-[0.2em]">Employee Details</h2>
+                <div class="flex gap-2">
+                    <button onclick="openEditModal()" class="text-[10px] bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-bold">Edit Server Data</button>
+                    <button id="refreshBtn" onclick="refreshAllData(true)" class="text-[10px] bg-[#1e3a5f] text-white px-4 py-2 rounded-lg font-bold">Refresh Database</button>
+                </div>
             </div>
-            
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="input-group relative">
                     <label>ID / Name Search</label>
-                    <input type="text" id="empId" placeholder="Search..." 
-                           class="input-field border-brand-blue/20 bg-brand-blue/5 font-bold text-brand-blue" 
-                           autocomplete="off" oninput="handleIdInput(this)" onclick="handleIdInput(this)">
+                    <input type="text" id="empId" placeholder="Search..." class="input-field border-[#1e3a5f]/20 bg-[#1e3a5f]/5 font-bold" autocomplete="off" oninput="handleIdInput(this)" onclick="handleIdInput(this)">
                     <div id="idSuggestions" class="suggestion-box"></div>
                 </div>
-                <div class="input-group"><label>Employee Name</label><input type="text" id="empName" class="input-field bg-slate-50 font-semibold" readonly></div>
+                <div class="input-group"><label>Employee Name</label><input type="text" id="empName" class="input-field bg-slate-50" readonly></div>
                 <div class="input-group"><label>Passport No</label><input type="text" id="passport" class="input-field bg-slate-50" readonly></div>
                 <div class="input-group"><label>Joining Date</label><input type="text" id="joiningDate" class="input-field bg-slate-50" readonly></div>
                 <div class="input-group"><label>Designation</label><input type="text" id="designation" class="input-field bg-slate-50" readonly></div>
                 <div class="input-group"><label>Period</label><input type="text" id="period" class="input-field bg-slate-50" readonly></div>
                 <div class="input-group"><label>Salary</label><input type="text" id="basicSalary" class="input-field bg-slate-50 font-bold" readonly></div>
-                <div class="input-group"><label>OT Rate (Hr)</label><input type="text" id="globalOtRate" class="input-field bg-brand-gold/10 font-black text-brand-blue border-brand-gold/30" readonly></div>
+                <div class="input-group"><label>OT Rate (Hr)</label><input type="text" id="globalOtRate" class="input-field bg-[#f1c40f]/10 font-black text-[#1e3a5f]" readonly></div>
             </div>
         </div>
 
         <!-- Entry Form -->
-        <div class="card p-5 mb-6 no-print border border-slate-200 shadow-sm">
+        <div class="card p-5 mb-6 border border-slate-200">
             <h2 class="text-xs font-black text-slate-500 uppercase tracking-[0.2em] mb-4">New Attendance Entry</h2>
             <div class="grid grid-cols-2 md:flex md:flex-wrap gap-4 items-end">
-                <div class="input-group flex-1 min-w-[140px]"><label>Selection Date</label><input type="text" id="attDate" placeholder="Select Date" class="input-field border-brand-blue/30"></div>
+                <div class="input-group flex-1 min-w-[140px]"><label>Selection Date</label><input type="text" id="attDate" placeholder="Select Date" class="input-field"></div>
                 <div class="input-group flex-1 min-w-[120px]"><label>Status</label>
-                    <select id="attStatus" class="input-field font-semibold">
-                        <option value="" selected disabled>Select Status</option>
-                        <option value="Present">Present</option>
-                        <option value="Absent">Absent</option>
-                        <option value="Leave">Leave</option>
-                        <option value="Holiday">Holiday</option>
-                    </select>
+                    <input type="text" id="attStatus" class="input-field font-semibold bg-slate-100" value="Present" readonly>
                 </div>
                 <div class="input-group flex-[2] min-w-[180px]"><label>Assigned Site</label><select id="sideName" class="input-field font-bold text-slate-800"><option value="">Loading Sites...</option></select></div>
-                
-                <div class="input-group flex-1 min-w-[80px]"><label>OT Hours</label><input type="number" id="dailyOt" placeholder="0" class="input-field border-brand-blue/20"></div>
-                <div class="input-group flex-1 min-w-[80px]"><label>Holiday</label><input type="number" id="holidayWork" placeholder="0" class="input-field border-brand-gold/40"></div>
-                <div class="input-group flex-1 min-w-[80px]"><label>Sunday</label><input type="number" id="sundayWork" placeholder="0" class="input-field border-brand-gold/40"></div>
-                
-                <button onclick="requestAddEntry()" class="bg-brand-blue hover:bg-slate-800 text-white font-bold py-2.5 px-8 rounded-lg shadow-lg shadow-slate-200 transition-all active:scale-95 text-sm uppercase">Add </button>
+                <div class="input-group flex-1 min-w-[80px]"><label>OT Hours</label><input type="number" id="dailyOt" placeholder="0" class="input-field"></div>
+                <div class="input-group flex-1 min-w-[110px]"><label>Holiday</label><input type="text" id="holidayWork" placeholder="0" class="input-field bg-slate-100 font-bold" readonly></div>
+                <div class="input-group flex-1 min-w-[110px]"><label>Sunday</label><input type="text" id="sundayWork" placeholder="0" class="input-field bg-slate-100 font-bold" readonly></div>
+                <input type="hidden" id="attRemark" value="NORMAL WORK">
+                <button id="addBtn" onclick="requestAddEntry()" class="bg-[#1e3a5f] hover:bg-slate-800 text-white font-bold py-2.5 px-8 rounded-lg text-sm uppercase">Add</button>
             </div>
         </div>
 
         <!-- Table Display -->
         <div class="card overflow-hidden mb-10 border border-slate-200">
-            <div class="p-4 bg-brand-blue text-white flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 bg-brand-gold rounded-full animate-pulse"></div>
-                    <h2 class="font-bold text-sm tracking-wide uppercase">Entry Preview List</h2>
-                </div>
-                <div class="flex gap-2 no-print">
-                    <button onclick="openFullPreview()" class="text-[10px] bg-brand-gold text-brand-blue px-4 py-2 rounded-lg font-black transition-colors flex items-center gap-1 uppercase">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                        Preview
-                    </button>
-                    <button id="saveBtn" onclick="saveAllToSheet()" class="text-[10px] bg-white text-brand-blue hover:bg-slate-100 px-5 py-2 rounded-lg font-black transition-colors uppercase">Save</button>
-                    <button onclick="clearTable()" class="text-[10px] bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold transition-colors uppercase">Clear All</button>
+            <div class="p-4 bg-[#1e3a5f] text-white flex justify-between items-center">
+                <h2 class="font-bold text-sm tracking-wide uppercase">Entry Preview List</h2>
+                <div class="flex gap-2">
+                    <button onclick="openFullPreview()" class="text-[10px] bg-[#f1c40f] text-[#1e3a5f] px-4 py-2 rounded-lg font-black uppercase">Full Preview</button>
+                    <button id="saveBtn" onclick="saveAllToSheet()" class="text-[10px] bg-white text-[#1e3a5f] px-5 py-2 rounded-lg font-black uppercase">Save to Server</button>
+                    <button onclick="clearTable()" class="text-[10px] bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold uppercase">Clear All</button>
                 </div>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-[11px]">
-                    <thead class="bg-slate-50 border-b border-slate-200">
+                    <thead class="bg-slate-50 border-b">
                         <tr>
-                            <th class="p-3 font-bold text-slate-600 whitespace-nowrap">SL NO</th>
-                            <th class="p-3 font-bold text-slate-600 whitespace-nowrap">DATE</th>
-                            <th class="p-3 font-bold text-slate-600 whitespace-nowrap">ID</th>
-                            <th class="p-3 font-bold text-slate-600 whitespace-nowrap">NAME</th>
-                            <th class="p-3 font-bold text-slate-600 whitespace-nowrap text-center">OT</th>
-                            <th class="p-3 font-bold text-slate-600 whitespace-nowrap text-center">HOLI</th>
-                            <th class="p-3 font-bold text-slate-600 whitespace-nowrap text-center">SUN</th>
-                            <th class="p-3 font-bold text-slate-600 whitespace-nowrap">SIDE NAME</th>
-                            <th class="p-3 font-bold text-slate-600 whitespace-nowrap">STATUS</th>
+                            <th class="p-3 font-bold text-slate-600">SL</th>
+                            <th class="p-3 font-bold text-slate-600">DATE</th>
+                            <th class="p-3 font-bold text-slate-600">ID</th>
+                            <th class="p-3 font-bold text-slate-600">NAME</th>
+                            <th class="p-3 font-bold text-slate-600 text-center">OT</th>
+                            <th class="p-3 font-bold text-slate-600 text-center">HOLI</th>
+                            <th class="p-3 font-bold text-slate-600 text-center">SUN</th>
+                            <th class="p-3 font-bold text-slate-600">SIDE NAME</th>
+                            <th class="p-3 font-bold text-slate-600">STATUS</th>
+                            <th class="p-3 font-bold text-slate-600">REMARK</th>
                             <th class="p-3 font-bold text-slate-600 text-center no-print">ACTION</th>
                         </tr>
                     </thead>
                     <tbody id="attendanceBody" class="divide-y divide-slate-100"></tbody>
-                    <tfoot class="bg-brand-blue/5 font-black border-t-2 border-brand-blue/10">
+                    <tfoot class="bg-[#1e3a5f]/5 font-black">
                         <tr>
-                            <td colspan="4" class="p-3 text-right text-slate-500 uppercase tracking-wider">Monthly Totals:</td>
-                            <td class="p-3 text-center text-brand-blue text-sm" id="totalHrs">0</td>
-                            <td class="p-3 text-center text-brand-gold text-sm" id="totalHoli">0</td>
-                            <td class="p-3 text-center text-orange-600 text-sm" id="totalSun">0</td>
-                            <td colspan="2"></td>
-                            <td class="no-print"></td>
+                            <td colspan="4" class="p-3 text-right uppercase">Page Totals:</td>
+                            <td class="p-3 text-center text-[#1e3a5f]" id="totalHrs">0</td>
+                            <td class="p-3 text-center text-orange-600" id="totalHoli">0</td>
+                            <td class="p-3 text-center text-orange-600" id="totalSun">0</td>
+                            <td colspan="4"></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -271,375 +288,323 @@
         </div>
     </div>
 
-    <!-- Scripts remain functional as before -->
-   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        let attendanceData = [], employees = [], currentSites = [], serverEditData = [], slCount = 1;
+        let isEmployeeLoaded = false, isSitesLoaded = false;
+        let datePicker, editQueryPicker;
+        let editModeId = null;
 
-<script>
-// ১. ভেরিয়েবলগুলো সবার উপরে (Global) থাকতে হবে
-let attendanceData = [], employees = [], slCount = 1;
-let holidayList = []; // শিট থেকে আসা ছুটির তালিকা এখানে জমা হবে
-let isEmployeeLoaded = false, isSitesLoaded = false;
-let datePicker;
+        const HOLIDAY_LIST = [
+            "2026-01-01", "2026-01-02", "2026-02-01", "2026-02-15", "2026-02-17",
+            "2026-02-20", "2026-03-12", "2026-03-19", "2026-03-20", "2026-03-21",
+            "2026-05-01", "2026-05-31", "2026-06-21", "2026-08-15", "2026-09-16",
+            "2026-09-23", "2026-11-02", "2026-11-08", "2026-12-22", "2026-12-25"
+        ];
 
-// আপনার দেওয়া Deployment ID
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_RgZ7yblB0PMuLqG2IOykhBIpV0_9QQXavvRVBOrnhKuFoXVQ-Nzys8Eje6PXrt2LWg/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw0EmLttIPFImHkDNnOMZT2__bHzfs8Rq97myl-RfYWZiwDUm4f6G0ngjvPjp_J8IuJ/exec";
 
-window.onload = () => {
-    // ২. Flatpickr সেটিংস এবং অটো-হলিডে লজিক
-    datePicker = flatpickr("#attDate", { 
-        dateFormat: "Y-m-d", 
-        altInput: true, 
-        altFormat: "F j, Y",
-        placeholder: "Select Date",
-        onChange: function(selectedDates, dateStr) {
-            if (selectedDates.length > 0) {
-                const statusSelect = document.getElementById('attStatus');
-                
-                // ক) রবিবার চেক (0 = Sunday)
-                const day = selectedDates[0].getDay(); 
-                const isSunday = (day === 0);
-                
-                // খ) শিটের হলিডে লিস্ট চেক
-                // dateStr ফরম্যাট (YYYY-MM-DD) এর সাথে লিস্টের তুলনা
-                const isSheetHoliday = holidayList.includes(dateStr);
+        window.onload = () => {
+            datePicker = flatpickr("#attDate", { 
+                dateFormat: "Y-m-d", altInput: true, altFormat: "F j, Y",
+                onChange: (d, dateStr) => handleDateChange(dateStr)
+            });
+            editQueryPicker = flatpickr("#editQueryDate", { 
+                dateFormat: "Y-m-d", altInput: true, altFormat: "F j, Y"
+            });
+            refreshAllData(false);
+            document.addEventListener('click', (e) => {
+                const idBox = document.getElementById('idSuggestions');
+                if (idBox && !e.target.closest('.relative')) idBox.style.display = 'none';
+            });
+        };
 
-                if (isSunday || isSheetHoliday) {
-                    statusSelect.value = "Holiday";
-                } else {
-                    statusSelect.value = "Present";
+        async function refreshAllData(isManual) { 
+            const btn = document.getElementById('refreshBtn');
+            const mainContent = document.getElementById('mainContent');
+            try {
+                if (isManual) {
+                    btn.innerHTML = `<span class="spinner"></span> Updating...`;
+                    btn.disabled = true;
+                    mainContent.classList.add('screen-lock-blur');
                 }
+                const [empRes, siteRes] = await Promise.all([
+                    fetch(`${SCRIPT_URL}?action=getEmployeeData`),
+                    fetch(`${SCRIPT_URL}?action=getSideNames`)
+                ]);
+                const empData = await empRes.json();
+                employees = empData.map(emp => ({ ...emp, id: String(emp.id).padStart(4, '0') }));
+                currentSites = await siteRes.json();
+                const siteSelect = document.getElementById('sideName');
+                if(siteSelect) {
+                    siteSelect.innerHTML = '<option value="" selected disabled>Select Site</option>' + 
+                        currentSites.map(s => `<option value="${s}">${s}</option>`).join('');
+                }
+                isEmployeeLoaded = true; isSitesLoaded = true;
+                if (isManual) {
+                    btn.innerHTML = `Refresh Database`; btn.disabled = false;
+                    mainContent.classList.remove('screen-lock-blur');
+                    showCustomAlert("Success", "Database updated successfully!", "success");
+                }
+                checkInitialLoad();
+            } catch (err) { console.error(err); if(btn) { btn.innerHTML = `Refresh Database`; btn.disabled = false; } }
+        }
+
+        function checkInitialLoad() {
+            if (isEmployeeLoaded && isSitesLoaded) {
+                document.getElementById('loadingOverlay').classList.add('fade-out');
+                document.getElementById('mainContent').classList.remove('opacity-0');
             }
         }
-    });
-    
-    refreshAllData(false);
-    
-    document.addEventListener('click', (e) => {
-        const idBox = document.getElementById('idSuggestions');
-        if (idBox && !e.target.closest('.relative')) idBox.style.display = 'none';
-    });
-};
 
-async function refreshAllData(isManual) { 
-    const btn = document.getElementById('refreshBtn');
-    const mainContent = document.getElementById('mainContent');
-    const sideSelect = document.getElementById('sideName');
-    
-    try {
-        if (isManual) {
+        // --- Server Edit Functions ---
+        function openEditModal() { document.getElementById('editSheetModal').style.display = 'flex'; }
+        function closeEditModal() { document.getElementById('editSheetModal').style.display = 'none'; }
+
+        async function fetchDataForEdit() {
+            const date = document.getElementById('editQueryDate').value;
+            if (!date) return showCustomAlert("Error", "Please select a date first!", "warning");
+            
+            const btn = document.getElementById('fetchDataBtn');
+            const tbody = document.getElementById('editSheetBody');
+            
+            btn.innerHTML = `<span class="spinner"></span> Loading...`;
+            btn.disabled = true;
+            tbody.innerHTML = `<tr><td colspan="8" class="p-10 text-center"><span class="loader-circle inline-block"></span><p class="mt-2 text-slate-500 font-bold">Connecting to Google Sheets...</p></td></tr>`;
+
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=getAttendanceByDate&date=${date}`);
+                const data = await res.json();
+                serverEditData = data;
+
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" class="p-10 text-center text-red-500 font-bold">No records found for this date in the server.</td></tr>`;
+                } else {
+                    renderEditTable();
+                }
+            } catch (err) {
+                showCustomAlert("Connection Error", "Failed to fetch data from server.", "error");
+                tbody.innerHTML = `<tr><td colspan="8" class="p-10 text-center text-red-500 font-bold">Error loading data. Check internet or API URL.</td></tr>`;
+            } finally {
+                btn.innerHTML = `Load Data`; btn.disabled = false;
+            }
+        }
+
+        function renderEditTable() {
+            const tbody = document.getElementById('editSheetBody');
+            tbody.innerHTML = serverEditData.map((item, idx) => {
+                const siteOptions = currentSites.map(s => `<option value="${s}" ${item.site === s ? 'selected' : ''}>${s}</option>`).join('');
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="p-3 border font-bold text-slate-700">${item.empId}</td>
+                        <td class="p-3 border uppercase font-medium text-slate-600">${item.empName}</td>
+                        <td class="p-3 border text-slate-500">${item.date}</td>
+                        <td class="p-3 border">
+                            <select onchange="updateLocalServerData(${idx}, 'site', this.value)" class="w-full bg-orange-50 border-orange-200 text-[#1e3a5f] p-1.5 rounded font-bold text-xs outline-none focus:border-orange-400">
+                                ${siteOptions}
+                            </select>
+                        </td>
+                        <td class="p-3 border">
+                            <input type="number" step="0.5" value="${item.ot}" onchange="updateLocalServerData(${idx}, 'ot', this.value)" class="w-full bg-orange-50 border-orange-200 p-1.5 rounded text-center font-bold text-xs outline-none focus:border-orange-400">
+                        </td>
+                        <td class="p-3 border text-center text-slate-500 font-bold">${item.holidayWork || 0}</td>
+                        <td class="p-3 border text-center text-slate-500 font-bold">${item.sundayWork || 0}</td>
+                        <td class="p-3 border italic text-slate-400">${item.remark}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateLocalServerData(idx, field, val) {
+            serverEditData[idx][field] = val;
+        }
+
+        async function updateServerRecords() {
+            if (serverEditData.length === 0) return;
+            const btn = document.getElementById('updateRecordsBtn');
+            const overlay = document.getElementById('loadingOverlay');
+            
             btn.innerHTML = `<span class="spinner"></span> Updating...`;
             btn.disabled = true;
-            mainContent.classList.add('screen-lock-blur');
-            resetAllInputs();
-            attendanceData = [];
-            slCount = 1;
-            renderTable();
+            overlay.classList.remove('fade-out');
+            overlay.classList.add('processing-mode');
+            document.getElementById('loadingTask').innerText = "Pushing updates to Google Sheets...";
+
+            try {
+                // We send the whole batch for the selected date
+                await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ action: 'updateAttendance', data: serverEditData })
+                });
+
+                showCustomAlert("Update Success", "Google Sheet has been updated successfully!", "success");
+                closeEditModal();
+            } catch (err) {
+                showCustomAlert("Sync Error", "Could not update data. Check GAS code.", "error");
+            } finally {
+                btn.innerHTML = `Update Records`; btn.disabled = false;
+                overlay.classList.add('fade-out');
+                overlay.classList.remove('processing-mode');
+            }
         }
 
-        // শিট থেকে সব ডাটা একত্রে ফেচ করা হচ্ছে
-        const response = await fetch(`${SCRIPT_URL}?type=json`);
-        const data = await response.json();
-
-        // ১. Employee Data প্রসেস (আপনার শিটের কলাম ম্যাপিং অনুযায়ী)
-        if (data.employees && data.employees.length > 1) {
-            employees = data.employees.slice(1).map(emp => ({
-                id: String(emp[1]).padStart(5, '0'), // B Column: ID
-                name: emp[2],                        // C Column: Name
-                period: emp[3],                      // D Column: Period
-                designation: emp[4],                 // E Column: Designation
-                joining: emp[5],                     // F Column: Joining Date
-                workingAs: emp[6],                   // G Column: Working As
-                passport: emp[7],                    // H Column: Passport
-                salary: emp[8],                      // I Column: Salary
-                otRate: emp[9]                       // J Column: OT Rate
-            }));
-            isEmployeeLoaded = true;
+        // --- Original Core Logic ---
+        function handleDateChange(dateStr) {
+            if (!dateStr) return;
+            const dateObj = new Date(dateStr);
+            const remarkEl = document.getElementById('attRemark'), sunEl = document.getElementById('sundayWork'), holEl = document.getElementById('holidayWork');
+            const salary = parseFloat(document.getElementById('basicSalary').value) || 0;
+            const isSunday = dateObj.getDay() === 0, isInHoli = HOLIDAY_LIST.includes(dateStr);
+            sunEl.value = 0; holEl.value = 0;
+            if (isSunday) { remarkEl.value = "Sunday"; if (salary > 0) sunEl.value = ((salary / 26) * 1.5).toFixed(2); }
+            else if (isInHoli) { remarkEl.value = "Public Holiday"; if (salary > 0) holEl.value = ((salary / 26) * 1.5).toFixed(2); }
+            else { remarkEl.value = "NORMAL WORK"; }
         }
 
-        // ২. Holiday List আপডেট (অটো-সিলেক্টের জন্য এটি জরুরি)
-        if (data.holidays) {
-            holidayList = data.holidays; 
+        function handleIdInput(input) {
+            const val = input.value.trim().toLowerCase(), box = document.getElementById('idSuggestions');
+            if (!box || employees.length === 0) return;
+            box.innerHTML = '';
+            const filtered = val === '' ? employees : employees.filter(e => e.id.includes(val) || e.name.toLowerCase().includes(val));
+            if (filtered.length > 0) {
+                filtered.forEach(emp => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item flex justify-between';
+                    div.innerHTML = `<div><span class="text-[#1e3a5f] font-bold">ID: ${emp.id}</span><br><span class="text-xs">${emp.name}</span></div>`;
+                    div.onmousedown = () => selectEmployee(emp);
+                    box.appendChild(div);
+                });
+                box.style.display = 'block';
+            } else box.style.display = 'none';
         }
 
-        // ৩. সাইট নেম ড্রপডাউন আপডেট
-        if (sideSelect && data.sites) {
-            sideSelect.innerHTML = '<option value="" disabled selected>Select Site</option>' + 
-                data.sites.map(s => `<option value="${s}">${s}</option>`).join('');
-            isSitesLoaded = true;
+        function selectEmployee(emp) {
+            document.getElementById('empId').value = emp.id;
+            document.getElementById('empName').value = emp.name;
+            document.getElementById('passport').value = emp.passport || '';
+            document.getElementById('designation').value = emp.workingAs || '';
+            document.getElementById('joiningDate').value = emp.joining || '';
+            document.getElementById('period').value = emp.period || '';
+            document.getElementById('basicSalary').value = emp.salary || '0';
+            document.getElementById('globalOtRate').value = emp.otRate || '0';
+            document.getElementById('idSuggestions').style.display = 'none';
+            if(document.getElementById('attDate').value) handleDateChange(document.getElementById('attDate').value);
         }
 
-        checkInitialLoad();
-
-        if (isManual) {
-            btn.innerHTML = `Refresh Database`;
-            btn.disabled = false;
-            mainContent.classList.remove('screen-lock-blur');
-            showCustomAlert("Success", "Database updated successfully!", "success");
+        function requestAddEntry() {
+            let rawEmpId = document.getElementById('empId').value.trim();
+            const attDate = document.getElementById('attDate').value, site = document.getElementById('sideName').value;
+            if(!rawEmpId || !attDate || !site) return showCustomAlert("Missing Data", "Fill ID, Date and Site!", "warning");
+            let formattedId = isNaN(rawEmpId) ? rawEmpId : rawEmpId.padStart(4, '0');
+            const isDuplicate = attendanceData.some(e => e.id !== editModeId && e.empId.replace("'", "") === formattedId && e.date === attDate);
+            if (isDuplicate) return showCustomAlert("Duplicate", "Entry exists for this date!", "error");
+            
+            const newEntry = { 
+                id: editModeId || Date.now(), entryDate: new Date().toLocaleDateString('en-GB'), entryTime: new Date().toLocaleTimeString('en-GB', { hour12: true }),
+                slNo: editModeId ? attendanceData.find(i=>i.id === editModeId).slNo : slCount++, date: attDate,
+                empId: "'" + formattedId, empName: document.getElementById('empName').value, workingAs: document.getElementById('designation').value,
+                passport: document.getElementById('passport').value, salary: document.getElementById('basicSalary').value, 
+                ot: parseFloat(document.getElementById('dailyOt').value) || 0, holidayWork: parseFloat(document.getElementById('holidayWork').value) || 0,
+                sundayWork: parseFloat(document.getElementById('sundayWork').value) || 0, site, status: "Present", remark: document.getElementById('attRemark').value,
+                rate: document.getElementById('globalOtRate').value, joining: document.getElementById('joiningDate').value, period: document.getElementById('period').value
+            };
+            if (editModeId) { attendanceData[attendanceData.findIndex(i => i.id === editModeId)] = newEntry; editModeId = null; 
+                document.getElementById('addBtn').innerText = "Add"; document.getElementById('addBtn').classList.replace('bg-orange-500', 'bg-[#1e3a5f]');
+            } else attendanceData.push(newEntry);
+            renderTable(); resetAllInputs();
         }
-    } catch (err) {
-        console.error("Refresh Error:", err);
-        isEmployeeLoaded = isSitesLoaded = true;
-        checkInitialLoad();
-    }
-}
 
-function checkInitialLoad() {
-    if (isEmployeeLoaded && isSitesLoaded) {
-        document.getElementById('loadingOverlay').classList.add('fade-out');
-        document.getElementById('mainContent').classList.remove('opacity-0');
-    }
-}
+        function renderTable() {
+            const tbody = document.getElementById('attendanceBody');
+            tbody.innerHTML = ''; let tOt = 0, tHol = 0, tSun = 0;
+            attendanceData.forEach((item) => {
+                tOt += item.ot; tHol += item.holidayWork; tSun += item.sundayWork;
+                tbody.innerHTML += `<tr id="row-${item.id}" class="hover:bg-slate-50 border-b">
+                    <td class="p-3">${item.slNo}</td><td class="p-3 font-bold">${item.date}</td><td class="p-3 font-black text-[#1e3a5f]">${item.empId}</td>
+                    <td class="p-3 uppercase font-medium">${item.empName}</td><td class="p-3 text-center">${item.ot}</td>
+                    <td class="p-3 text-center text-orange-600 font-bold">${item.holidayWork.toFixed(2)}</td>
+                    <td class="p-3 text-center text-orange-600 font-bold">${item.sundayWork.toFixed(2)}</td>
+                    <td class="p-3 text-[10px] uppercase">${item.site}</td><td class="p-3"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-[9px] font-black">${item.status}</span></td>
+                    <td class="p-3 italic text-slate-500 font-bold">${item.remark}</td>
+                    <td class="p-3 text-center no-print flex gap-2 justify-center">
+                        <button onclick="editEntry(${item.id})" class="text-blue-600 font-bold">Edit</button>
+                        <button onclick="confirmDelete(${item.id})" class="text-red-500 font-bold">Del</button>
+                    </td></tr>`;
+            });
+            document.getElementById('totalHrs').innerText = tOt.toFixed(1);
+            document.getElementById('totalHoli').innerText = tHol.toFixed(2);
+            document.getElementById('totalSun').innerText = tSun.toFixed(2);
+        }
 
-function handleIdInput(input) {
-    const val = input.value.trim().toLowerCase();
-    const box = document.getElementById('idSuggestions');
-    if (!box || employees.length === 0) return;
-    box.innerHTML = '';
-    
-    // ভ্যালু খালি থাকলে সাজেশন দেখাবে না, টাইপ করলে ফিল্টার করবে
-    const filtered = val === '' ? [] : employees.filter(e => e.id.includes(val) || e.name.toLowerCase().includes(val));
-    
-    if (filtered.length > 0) {
-        filtered.forEach(emp => {
-            const div = document.createElement('div');
-            div.className = 'suggestion-item flex justify-between items-center transition-colors p-2 cursor-pointer hover:bg-slate-100';
-            div.innerHTML = `<div class="flex flex-col"><span class="text-brand-blue font-black text-xs">ID: ${emp.id}</span><span class="text-slate-800 font-semibold text-[13px]">${emp.name}</span></div>`;
-            div.onmousedown = () => selectEmployee(emp);
-            box.appendChild(div);
-        });
-        box.style.display = 'block';
-    } else { box.style.display = 'none'; }
-}
+        function editEntry(id) {
+            const item = attendanceData.find(i => i.id === id); if (!item) return;
+            editModeId = id; const btn = document.getElementById('addBtn'); btn.innerText = "Update"; btn.classList.replace('bg-[#1e3a5f]', 'bg-orange-500');
+            const rawId = item.empId.replace("'", ""); document.getElementById('empId').value = rawId;
+            const emp = employees.find(e => e.id === rawId); if (emp) selectEmployee(emp);
+            datePicker.setDate(item.date); document.getElementById('sideName').value = item.site;
+            document.getElementById('dailyOt').value = item.ot; document.getElementById('holidayWork').value = item.holidayWork;
+            document.getElementById('sundayWork').value = item.sundayWork; document.getElementById('attRemark').value = item.remark;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-function selectEmployee(emp) {
-    document.getElementById('empId').value = emp.id;
-    document.getElementById('empName').value = emp.name;
-    document.getElementById('passport').value = emp.passport || '';
-    document.getElementById('designation').value = emp.designation || '';
-    document.getElementById('joiningDate').value = emp.joining || '';
-    document.getElementById('period').value = emp.period || '';
-    document.getElementById('basicSalary').value = emp.salary || '';
-    document.getElementById('globalOtRate').value = emp.otRate || '0';
-    document.getElementById('idSuggestions').style.display = 'none';
-}
-function showCustomAlert(title, msg, type = 'error') {
-    const container = document.getElementById('alertIconContainer');
-    const titleEl = document.getElementById('alertTitle');
-    const msgEl = document.getElementById('alertMessage');
-    titleEl.innerText = title;
-    msgEl.innerText = msg;
+        function confirmDelete(id) {
+            document.getElementById('alertCancelBtn').classList.remove('hidden');
+            document.getElementById('alertOkBtn').onclick = () => {
+                attendanceData = attendanceData.filter(i => i.id !== id);
+                attendanceData.forEach((item, idx) => item.slNo = idx + 1); slCount = attendanceData.length + 1;
+                renderTable(); closeAlert();
+            };
+            showCustomAlert("Confirm", "Delete this row?", "warning");
+        }
 
-    if(type === 'error') {
-        container.className = "flex items-center justify-center w-16 h-16 mx-auto bg-red-100 rounded-full mb-6";
-        container.innerHTML = `<svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
-    } else if(type === 'success') {
-        container.className = "flex items-center justify-center w-16 h-16 mx-auto bg-green-100 rounded-full mb-6";
-        container.innerHTML = `<svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
-    } else {
-        container.className = "flex items-center justify-center w-16 h-16 mx-auto bg-brand-gold/20 rounded-full mb-6";
-        container.innerHTML = `<svg class="w-8 h-8 text-brand-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
-    }
-    document.getElementById('customAlert').style.display = 'flex';
-}
+        function openFullPreview() {
+            const body = document.getElementById('fullPreviewBody'), foot = document.getElementById('fullPreviewFoot');
+            let tOt = 0, tHol = 0, tSun = 0;
+            body.innerHTML = attendanceData.map(item => {
+                tOt += item.ot; tHol += item.holidayWork; tSun += item.sundayWork;
+                return `<tr><td class="p-4 border">${item.slNo}</td><td class="p-4 border font-bold">${item.date}</td><td class="p-4 border font-black">${item.empId}</td>
+                        <td class="p-4 border uppercase">${item.empName}</td><td class="p-4 border">${item.workingAs}</td><td class="p-4 border text-center font-bold">${item.ot}</td>
+                        <td class="p-4 border text-center text-orange-600 font-bold print:text-black">${item.holidayWork}</td>
+                        <td class="p-4 border text-center text-orange-600 font-bold print:text-black">${item.sundayWork}</td>
+                        <td class="p-4 border uppercase text-[10px]">${item.site}</td><td class="p-4 border text-center font-bold">${item.status}</td>
+                        <td class="p-4 border italic font-bold text-slate-500 print:text-black">${item.remark}</td></tr>`;
+            }).join('');
+            foot.innerHTML = `<tr class="bg-slate-50 font-black"><td colspan="5" class="p-4 border text-right uppercase">Total:</td><td class="p-4 border text-center">${tOt.toFixed(1)}</td>
+                <td class="p-4 border text-center">${tHol.toFixed(2)}</td><td class="p-4 border text-center">${tSun.toFixed(2)}</td><td colspan="3" class="border"></td></tr>`;
+            document.getElementById('printReportDate').innerText = "Reported: " + new Date().toLocaleString();
+            document.getElementById('fullPreviewModal').style.display = 'flex';
+        }
 
-function closeAlert() { document.getElementById('customAlert').style.display = 'none'; }
+        function closeFullPreview() { document.getElementById('fullPreviewModal').style.display = 'none'; }
 
-function openFullPreview() {
-    if(attendanceData.length === 0) return showCustomAlert("No Data", "No Data Found!", "warning");
-    const body = document.getElementById('fullPreviewBody');
-    body.innerHTML = attendanceData.map(item => `
-        <tr class="hover:bg-slate-50">
-            <td class="p-2 border text-center font-bold">${item.slNo}</td>
-            <td class="p-2 border font-bold text-brand-blue">${item.date}</td>
-            <td class="p-2 border font-black">${item.empId}</td>
-            <td class="p-2 border font-semibold uppercase">${item.empName}</td>
-            <td class="p-2 border">${item.workingAs}</td>
-            <td class="p-2 border text-center font-black text-brand-blue">${item.ot}</td>
-            <td class="p-2 border text-center font-black text-brand-gold">${item.holidayWork}</td>
-            <td class="p-2 border text-center font-black text-orange-600">${item.sundayWork}</td>
-            <td class="p-2 border"><span class="text-[9px] bg-slate-100 px-1 rounded">${item.site}</span></td>
-            <td class="p-2 border"><span class="font-bold ${item.status === 'Present' ? 'text-green-600' : 'text-red-600'}">${item.status}</span></td>
-        </tr>
-    `).join('');
-    document.getElementById('fullPreviewModal').style.display = 'flex';
-}
+        async function saveAllToSheet() {
+            if (attendanceData.length === 0) return showCustomAlert("Empty", "No entries!", "warning");
+            const btn = document.getElementById('saveBtn'), overlay = document.getElementById('loadingOverlay');
+            btn.disabled = true; btn.innerText = "Saving..."; overlay.classList.remove('fade-out'); overlay.classList.add('processing-mode');
+            try {
+                await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(attendanceData) });
+                showCustomAlert("Success", "Saved to Server!", "success"); attendanceData = []; slCount = 1; renderTable(); 
+            } catch (err) { showCustomAlert("Error", "Save failed!", "error"); }
+            finally { btn.disabled = false; btn.innerText = "Save to Server"; overlay.classList.add('fade-out'); overlay.classList.remove('processing-mode'); }
+        }
 
-function closeFullPreview() { document.getElementById('fullPreviewModal').style.display = 'none'; }
+        function clearTable() { attendanceData = []; slCount = 1; renderTable(); }
+        function resetAllInputs() {
+            ['empId', 'empName', 'passport', 'designation', 'joiningDate', 'period', 'basicSalary', 'globalOtRate', 'dailyOt', 'holidayWork', 'sundayWork', 'sideName'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).value = ""; });
+            document.getElementById('attStatus').value = "Present"; document.getElementById('attRemark').value = "NORMAL WORK";
+            if(datePicker) datePicker.clear(); editModeId = null;
+            document.getElementById('addBtn').innerText = "Add"; document.getElementById('addBtn').classList.replace('bg-orange-500', 'bg-[#1e3a5f]');
+        }
 
-function requestAddEntry() {
-    const now = new Date();
-    const entryDate = now.toLocaleDateString('en-GB'); 
-    const entryTime = now.toLocaleTimeString('en-GB', { hour12: true });
-
-    let rawEmpId = document.getElementById('empId').value.trim();
-    const attDate = document.getElementById('attDate').value;
-    const status = document.getElementById('attStatus').value;
-    const site = document.getElementById('sideName').value;
-    const ot = parseFloat(document.getElementById('dailyOt').value) || 0;
-    const hWork = parseFloat(document.getElementById('holidayWork').value) || 0;
-    const sWork = parseFloat(document.getElementById('sundayWork').value) || 0;
-    
-    if(!rawEmpId) return showCustomAlert("Missing Data", "Please Select Employee ID ।", "warning");
-    if(!attDate) return showCustomAlert("Missing Data", "please Select Attendance Date ।", "warning");
-    if(!status) return showCustomAlert("Missing Data", "please Select Status ।", "warning");
-    if(!site) return showCustomAlert("Missing Data", "please Select Site Name ।", "warning");
-
-    let formattedId = rawEmpId;
-    if(!isNaN(rawEmpId)) formattedId = rawEmpId.padStart(4, '0');
-    let finalIdForSheet = "'" + formattedId;
-
-    const isDuplicateLocal = attendanceData.some(entry => entry.empId.replace("'", "") === formattedId && entry.date === attDate);
-    if (isDuplicateLocal) {
-        return showCustomAlert("Duplicate Entry", `ID: ${formattedId} Alredy Entry।`, "error");
-    }
-
-    attendanceData.push({ 
-        id: Date.now(),
-        entryDate: entryDate,
-        entryTime: entryTime,
-        slNo: slCount++, 
-        date: attDate,
-        empId: finalIdForSheet,
-        empName: document.getElementById('empName').value, 
-        workingAs: document.getElementById('designation').value,
-        passport: document.getElementById('passport').value,
-        salary: document.getElementById('basicSalary').value,
-        ot: ot,
-        holidayWork: hWork,
-        sundayWork: sWork,
-        site: site,
-        status: status,
-        rate: parseFloat(document.getElementById('globalOtRate').value) || 0,
-        joining: document.getElementById('joiningDate').value,
-        period: document.getElementById('period').value
-    });
-    
-    renderTable();
-    resetAllInputs();
-}
-
-function resetAllInputs() {
-    ['empId', 'empName', 'passport', 'designation', 'joiningDate', 'period', 'basicSalary', 'globalOtRate', 'dailyOt', 'holidayWork', 'sundayWork', 'attStatus', 'sideName'].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) el.value = "";
-    });
-    if(datePicker) datePicker.clear();
-    document.getElementById('empId').focus();
-}
-
-function renderTable() {
-    const tbody = document.getElementById('attendanceBody'); 
-    tbody.innerHTML = '';
-    let hrs = 0, hHrs = 0, sHrs = 0;
-    attendanceData.forEach(item => {
-        hrs += item.ot;
-        hHrs += item.holidayWork;
-        sHrs += item.sundayWork;
-        tbody.innerHTML += `
-            <tr class="hover:bg-slate-50 border-b">
-                <td class="p-3 font-medium text-slate-400">${item.slNo}</td>
-                <td class="p-3 font-bold text-slate-700">${item.date}</td>
-                <td class="p-3 font-black text-brand-blue">${item.empId}</td>
-                <td class="p-3 font-semibold text-slate-800 uppercase">${item.empName}</td>
-                <td class="p-3 font-black text-brand-blue text-center">${item.ot}</td>
-                <td class="p-3 font-black text-brand-gold text-center">${item.holidayWork}</td>
-                <td class="p-3 font-black text-orange-600 text-center">${item.sundayWork}</td>
-                <td class="p-3"><span class="text-[10px] font-bold bg-slate-100 px-2 py-1 rounded text-slate-600">${item.site}</span></td>
-                <td class="p-3"><span class="px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${item.status === 'Present' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${item.status}</span></td>
-                <td class="p-3 text-center no-print">
-                    <div class="flex items-center justify-center gap-2">
-                        <button onclick="editEntry(${item.id})" class="text-brand-blue hover:text-slate-900 p-1" title="Edit">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                        </button>
-                        <button onclick="deleteEntry(${item.id})" class="text-slate-300 hover:text-red-500 p-1" title="Delete">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
-                    </div>
-                </td>
-            </tr>`;
-    });
-    document.getElementById('totalHrs').innerText = hrs; 
-    document.getElementById('totalHoli').innerText = hHrs; 
-    document.getElementById('totalSun').innerText = sHrs; 
-}
-
-function editEntry(id) {
-    const item = attendanceData.find(i => i.id === id);
-    if(!item) return;
-    document.getElementById('empId').value = item.empId.replace("'", "");
-    document.getElementById('empName').value = item.empName;
-    document.getElementById('passport').value = item.passport;
-    document.getElementById('designation').value = item.workingAs;
-    document.getElementById('joiningDate').value = item.joining;
-    document.getElementById('period').value = item.period;
-    document.getElementById('basicSalary').value = item.salary;
-    document.getElementById('globalOtRate').value = item.rate;
-    document.getElementById('dailyOt').value = item.ot;
-    document.getElementById('holidayWork').value = item.holidayWork;
-    document.getElementById('sundayWork').value = item.sundayWork;
-    document.getElementById('attStatus').value = item.status;
-    document.getElementById('sideName').value = item.site;
-    if(datePicker) datePicker.setDate(item.date);
-    attendanceData = attendanceData.filter(i => i.id !== id);
-    renderTable();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function deleteEntry(id) { 
-    if(confirm("Are You Sure Delete Data?")) {
-        attendanceData = attendanceData.filter(i => i.id !== id); 
-        renderTable(); 
-    }
-}
-
-function clearTable() { 
-    if(attendanceData.length > 0 && confirm("Are You Sure Delete Information?")) {
-        attendanceData = []; slCount = 1; renderTable(); 
-    }
-}
-
-async function saveAllToSheet() {
-    if (attendanceData.length === 0) return showCustomAlert("Empty List", "No Data Found!", "warning");
-    
-    const btn = document.getElementById('saveBtn');
-    const loadingOverlay = document.getElementById('loadingOverlay');
-    const mainContent = document.getElementById('mainContent');
-    const loadingTask = document.getElementById('loadingTask');
-
-    btn.disabled = true; 
-    btn.innerText = "Saving...";
-    mainContent.classList.add('screen-lock-blur');
-    loadingOverlay.classList.add('processing-mode');
-    loadingOverlay.classList.remove('fade-out');
-    loadingTask.innerText = "Uploading to Server...";
-
-    const unlockUI = () => {
-        btn.disabled = false; 
-        btn.innerText = "Save"; 
-        mainContent.classList.remove('screen-lock-blur');
-        loadingOverlay.classList.add('fade-out');
-        loadingOverlay.classList.remove('processing-mode'); 
-    };
-
-    try {
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(attendanceData)
-        });
-        
-        showCustomAlert("Submitted Successfully", "Data has been sent to server.", "success"); 
-        attendanceData = []; 
-        slCount = 1; 
-        renderTable(); 
-        unlockUI();
-    } catch (err) {
-        showCustomAlert("Server Error", "Data Save Problem: " + err, "error"); 
-        unlockUI();
-    }
-}
-</script>
+        function closeAlert() { document.getElementById('customAlert').style.display = 'none'; document.getElementById('alertCancelBtn').classList.add('hidden'); document.getElementById('alertOkBtn').onclick = closeAlert; }
+        function showCustomAlert(title, msg, type = 'error') {
+            const container = document.getElementById('alertIconContainer');
+            document.getElementById('alertTitle').innerText = title; document.getElementById('alertMessage').innerText = msg;
+            container.innerHTML = type === 'success' ? '✅' : type === 'warning' ? '🔔' : '⚠️';
+            container.className = `w-16 h-16 mx-auto rounded-full mb-6 flex items-center justify-center text-2xl ${type==='success'?'bg-green-100':type==='warning'?'bg-amber-100':'bg-red-100'}`;
+            document.getElementById('customAlert').style.display = 'flex';
+        }
+    </script>
 </body>
 </html>
